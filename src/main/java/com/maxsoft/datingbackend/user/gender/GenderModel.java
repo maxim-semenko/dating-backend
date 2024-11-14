@@ -1,4 +1,4 @@
-package com.maxsoft.datingbackend.user.role;
+package com.maxsoft.datingbackend.user.gender;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,13 +10,12 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "role")
+@Table(name = "gender")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleModel {
-
+public class GenderModel {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
@@ -24,5 +23,5 @@ public class RoleModel {
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
     @NotNull
-    private RoleEnum name;
+    private GenderEnum name;
 }
