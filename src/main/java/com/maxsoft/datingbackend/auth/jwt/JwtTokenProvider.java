@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,27 +30,26 @@ public class JwtTokenProvider {
     private Long expirationTime;
 
     public String generateToken(String username, Set<RoleModel> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", getRoleNames(roles));
-
         Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
 
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("roles", roles.stream().map(RoleModel::getName).collect(Collectors.toList()));
 
         return Jwts.builder()
                 .setSubject(username)
-                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
+                .setClaims(claims)
                 .compact();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                     .build()
-                    .parseClaimsJws(authToken);
+                    .parseClaimsJws(token);
 
             return true;
         } catch (JwtException e) {
@@ -70,11 +70,19 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    private Set<String> getRoleNames(Set<RoleModel> userRoles) {
-        return userRoles
-                .stream()
-                .map(roleModel -> roleModel.getName().name())
-                .collect(Collectors.toSet());
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        Object roles = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
+
+        if (roles instanceof List<?>) {
+            return (List<String>) roles;
+        }
+        throw new IllegalArgumentException("Invalid roles format in token");
     }
 
 }
