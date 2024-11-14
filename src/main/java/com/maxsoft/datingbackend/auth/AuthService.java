@@ -6,8 +6,8 @@ import com.maxsoft.datingbackend.user.UserRepository;
 import com.maxsoft.datingbackend.user.role.RoleEnum;
 import com.maxsoft.datingbackend.user.role.RoleRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +24,9 @@ public class AuthService {
     private RoleRepository roleRepository;
 
     public String register(String email, String password) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email already in use");
+        }
         UserModel user = new UserModel();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
@@ -36,10 +39,6 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRoles());
-
-        System.out.println(token);
-
-        return token;
+        return jwtTokenProvider.generateToken(user.getEmail(), user.getId(), user.getRoles());
     }
 }

@@ -1,10 +1,7 @@
 package com.maxsoft.datingbackend.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -19,12 +16,12 @@ public class AuthController {
         return "Auth API is working";
     }
 
-    @GetMapping("/register")
-    public Mono<String> register(@RequestBody RegisterDto registerDto) {
-        return Mono.just(authService.register(registerDto.getEmail(), registerDto.getPassword()));
+    @PostMapping("/register")
+    public Mono<String> register(@RequestBody AuthRequestDto authRequestDto) {
+        return Mono.just(authService.register(authRequestDto.getEmail(), authRequestDto.getPassword()));
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public String login() {
         return "LOGIN";
     }

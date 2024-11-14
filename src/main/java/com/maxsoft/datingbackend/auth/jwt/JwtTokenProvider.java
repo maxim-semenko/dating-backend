@@ -16,6 +16,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,14 +30,15 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expiration}")
     private Long expirationTime;
 
-    public String generateToken(String username, Set<RoleModel> roles) {
-        Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+    public String generateToken(String email, UUID uuid, Set<RoleModel> roles) {
+        Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 
-        Claims claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("uuid", uuid);
         claims.put("roles", roles.stream().map(RoleModel::getName).collect(Collectors.toList()));
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
