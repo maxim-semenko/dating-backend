@@ -1,7 +1,6 @@
 package com.maxsoft.datingbackend.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.maxsoft.datingbackend.profile.ProfileModel;
 import com.maxsoft.datingbackend.user.role.RoleModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -12,11 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
-@Table(name="\"user\"")
+@Table(name = "\"user\"")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,6 +42,8 @@ public class UserModel {
 
     @CreatedDate
     private Date createdAt;
+
+    private Boolean isBlock = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

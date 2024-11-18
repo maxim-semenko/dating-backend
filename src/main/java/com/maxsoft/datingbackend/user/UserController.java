@@ -1,16 +1,15 @@
 package com.maxsoft.datingbackend.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -21,13 +20,21 @@ public class UserController {
 
     @GetMapping("/info")
     public String getStatus() {
-        return "Users API is working!";
+//        return "Users API is working!";
+        return "Hello from API.\nVLAD PIDORAS :)";
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') and #id == authentication.principal.id")
+    public Mono<UserModel> getById(@PathVariable UUID id) {
+        System.out.println(id);
+        return Mono.just(userService.getById(id));
     }
 
     @GetMapping("")
     @PreAuthorize("hasRole('USER')")
     public Flux<UserModel> findAll() {
-        return userService.findAll();
+        return Flux.fromIterable(userService.findAll());
     }
 
     @GetMapping("/security/admin")
@@ -36,10 +43,5 @@ public class UserController {
         return Mono.just("ADMIN!");
     }
 
-    @GetMapping("/permit")
-    @PreAuthorize("permitAll()")
-    public Mono<String> getPermit() {
-        return Mono.just("permit all!");
-    }
 
 }

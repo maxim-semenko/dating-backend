@@ -1,8 +1,8 @@
 package com.maxsoft.datingbackend.config;
 
-import com.maxsoft.datingbackend.user.gender.GenderEnum;
-import com.maxsoft.datingbackend.user.gender.GenderModel;
-import com.maxsoft.datingbackend.user.gender.GenderRepository;
+import com.maxsoft.datingbackend.profile.gender.GenderEnum;
+import com.maxsoft.datingbackend.profile.gender.GenderModel;
+import com.maxsoft.datingbackend.profile.gender.GenderRepository;
 import com.maxsoft.datingbackend.user.role.RoleEnum;
 import com.maxsoft.datingbackend.user.role.RoleModel;
 import com.maxsoft.datingbackend.user.role.RoleRepository;
@@ -23,6 +23,7 @@ public class DatabaseInitializerConfig {
         return args -> {
             if (roleRepository.count() == 0) {
                 roleRepository.save(RoleModel.builder().name(RoleEnum.ROLE_ADMIN).build());
+                roleRepository.save(RoleModel.builder().name(RoleEnum.ROLE_MODERATOR).build());
                 roleRepository.save(RoleModel.builder().name(RoleEnum.ROLE_USER).build());
                 roleRepository.save(RoleModel.builder().name(RoleEnum.ROLE_SUPER_USER).build());
             }
