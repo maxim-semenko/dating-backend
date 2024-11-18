@@ -22,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login() {
-        return "LOGIN";
+    public Mono<String> login(@RequestBody AuthRequestDto authRequestDto) {
+        return Mono.just(authService.login(authRequestDto.getEmail(), authRequestDto.getPassword()));
     }
 
 }
