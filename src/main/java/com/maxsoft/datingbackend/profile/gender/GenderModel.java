@@ -1,4 +1,4 @@
-package com.maxsoft.datingbackend.user.gender;
+package com.maxsoft.datingbackend.profile.gender;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

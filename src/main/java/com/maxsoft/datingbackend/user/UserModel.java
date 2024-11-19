@@ -43,7 +43,7 @@ public class UserModel {
     @CreatedDate
     private Date createdAt;
 
-    private Boolean isBlock = false;
+    private Boolean isAccountNonLocked = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
